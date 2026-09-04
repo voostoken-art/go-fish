@@ -6,7 +6,26 @@ import { FishMesh } from "./Fish";
 import { MonsterFishMesh } from "./MonsterFish";
 import { MonsterBurstMesh, animateBurst } from "./MonsterBurst";
 import { rollFish, useGameStore, type FishCatch } from "@/hooks/useGameStore";
-import { equippedRod } from "@/hooks/useRodStore";
+import { equippedRod, useRodStore } from "@/hooks/useRodStore";
+
+/** Tampilan 3D pancing per tier: gagang, batang, dan aksen. */
+interface RodLook {
+  grip: string;
+  blank: string;
+  tip: string;
+  accent: string;
+  glow: number;
+}
+const ROD_LOOKS: Record<string, RodLook> = {
+  starter: { grip: "#5d3a22", blank: "#22303c", tip: "#2c3d4c", accent: "#b9c1c8", glow: 0 },
+  uncommon: { grip: "#3f5a2e", blank: "#1f4030", tip: "#2a5a40", accent: "#8fd18f", glow: 0 },
+  rare: { grip: "#1f3352", blank: "#16345e", tip: "#1f4e8c", accent: "#6db4ff", glow: 0.15 },
+  epic: { grip: "#3a2154", blank: "#2c1a52", tip: "#5b2d8e", accent: "#c58cff", glow: 0.35 },
+  legendary: { grip: "#5c3a10", blank: "#6b3d0f", tip: "#b06a1e", accent: "#ffcf5c", glow: 0.6 },
+  mythic: { grip: "#4a0f22", blank: "#520f2e", tip: "#8c1445", accent: "#ff5c8a", glow: 1 },
+};
+const rodLook = (id: string | null | undefined): RodLook =>
+  (id ? ROD_LOOKS[id] : undefined) ?? ROD_LOOKS["starter"]!;
 import { clampToWalkable, isInWater, player, resolvePlayerGround } from "@/hooks/usePlayer";
 import { boat } from "@/hooks/useBoat";
 import { useWeather } from "@/hooks/useWeather";
@@ -62,6 +81,7 @@ export function Angler() {
   const leftArm = useRef<THREE.Group>(null);
   const head = useRef<THREE.Group>(null);
   const rod = useRef<THREE.Group>(null);
+  const look = rodLook(useRodStore((s) => s.equippedId));
   const rodBend = useRef<THREE.Group>(null);
   const rodTip = useRef<THREE.Object3D>(null);
   const bobber = useRef<THREE.Group>(null);
@@ -1052,12 +1072,18 @@ export function Angler() {
               {/* grip */}
               <mesh position={[0, 0.35, 0]} castShadow>
                 <cylinderGeometry args={[0.13, 0.15, 1.1, 8]} />
-                <meshStandardMaterial color="#5d3a22" roughness={1} />
+                <meshStandardMaterial color={look.grip} roughness={1} />
               </mesh>
               {/* reel */}
               <mesh position={[0.28, 0.75, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
                 <cylinderGeometry args={[0.24, 0.24, 0.28, 12]} />
-                <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.3} />
+                <meshStandardMaterial
+                  color={look.accent}
+                  metalness={0.7}
+                  roughness={0.3}
+                  emissive={look.accent}
+                  emissiveIntensity={look.glow}
+                />
               </mesh>
               {/* reel crank handle (spins while reeling) */}
               <group ref={reelCrank} position={[0.44, 0.75, 0]} rotation={[0, 0, Math.PI / 2]}>
@@ -1076,40 +1102,50 @@ export function Angler() {
               <group ref={rodBend} position={[0, 0.9, 0]}>
                 <mesh position={[0, 1.5, 0]} castShadow>
                   <cylinderGeometry args={[0.055, 0.1, 3, 8]} />
-                  <meshStandardMaterial color="#22303c" roughness={0.5} />
+                  <meshStandardMaterial
+                    color={look.blank}
+                    roughness={0.5}
+                    emissive={look.accent}
+                    emissiveIntensity={look.glow * 0.5}
+                  />
                 </mesh>
                 {/* ring guide bawah */}
                 <group position={[0.12, 1.0, 0]}>
                   <object3D ref={(o) => (guideRefs.current[1] = o)} />
                   <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                     <torusGeometry args={[0.055, 0.016, 6, 10]} />
-                    <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                    <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                   </mesh>
                 </group>
                 <group position={[0.1, 2.2, 0]}>
                   <object3D ref={(o) => (guideRefs.current[2] = o)} />
                   <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                     <torusGeometry args={[0.048, 0.014, 6, 10]} />
-                    <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                    <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                   </mesh>
                 </group>
                 <group position={[0, 3, 0]} rotation-x={0.22}>
                   <mesh position={[0, 1.1, 0]} castShadow>
                     <cylinderGeometry args={[0.025, 0.055, 2.2, 8]} />
-                    <meshStandardMaterial color="#2c3d4c" roughness={0.5} />
+                    <meshStandardMaterial
+                      color={look.tip}
+                      roughness={0.5}
+                      emissive={look.accent}
+                      emissiveIntensity={look.glow * 0.7}
+                    />
                   </mesh>
                   <group position={[0.08, 0.8, 0]}>
                     <object3D ref={(o) => (guideRefs.current[3] = o)} />
                     <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                       <torusGeometry args={[0.04, 0.012, 6, 10]} />
-                      <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                      <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                     </mesh>
                   </group>
                   <group position={[0.06, 1.7, 0]}>
                     <object3D ref={(o) => (guideRefs.current[4] = o)} />
                     <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                       <torusGeometry args={[0.034, 0.01, 6, 10]} />
-                      <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                      <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                     </mesh>
                   </group>
 
