@@ -31,6 +31,11 @@ export interface RodTier {
   id: string;
   name: string;
   max_catch_weight_kg: number;
+  /** % bonus applied to rare/epic/legendary/mythic weights when rolling. */
+  luck_percent: number;
+  /** % the reel duration is shortened by. */
+  speed_percent: number;
+  price_coins: number;
 }
 
 export interface BaitTier {
@@ -62,7 +67,8 @@ export interface FishData {
 }
 
 /** Active gear. A future shop swaps these ids; the formula stays untouched. */
-export const ACTIVE_ROD_TIER = "common";
+export const DEFAULT_ROD_ID = "starter";
+export const ACTIVE_ROD_TIER = DEFAULT_ROD_ID;
 export const ACTIVE_BAIT_TIER = "basic_bait";
 
 export const DEFAULT_BITE_WINDOW = 1.6;
@@ -79,11 +85,12 @@ export const FALLBACK_FISH_DATA: FishData = {
   ],
   rarityWeights: { common: 100, rare: 45, epic: 18, legendary: 6, mythic: 2 },
   rods: [
-    { id: "common", name: "Common Rod", max_catch_weight_kg: 100 },
-    { id: "rare", name: "Rare Rod", max_catch_weight_kg: 300 },
-    { id: "epic", name: "Epic Rod", max_catch_weight_kg: 600 },
-    { id: "legendary", name: "Legendary Rod", max_catch_weight_kg: 1000 },
-    { id: "mythic", name: "Mythic Rod", max_catch_weight_kg: 2500 },
+    { id: "starter", name: "Starter Rod", max_catch_weight_kg: 10, luck_percent: 0, speed_percent: 0, price_coins: 0 },
+    { id: "uncommon", name: "Uncommon Rod", max_catch_weight_kg: 40, luck_percent: 10, speed_percent: 5, price_coins: 1000 },
+    { id: "rare", name: "Rare Rod", max_catch_weight_kg: 100, luck_percent: 25, speed_percent: 12, price_coins: 10000 },
+    { id: "epic", name: "Epic Rod", max_catch_weight_kg: 250, luck_percent: 50, speed_percent: 22, price_coins: 60000 },
+    { id: "legendary", name: "Legendary Rod", max_catch_weight_kg: 600, luck_percent: 80, speed_percent: 35, price_coins: 250000 },
+    { id: "mythic", name: "Mythic Rod", max_catch_weight_kg: 1500, luck_percent: 130, speed_percent: 50, price_coins: 1000000 },
   ],
   baits: [
     {
@@ -155,4 +162,18 @@ export function priceFor(speciesId: string, weightKg: number, mutationKey = "non
   const s = current.species.find((x) => x.id === speciesId);
   const m = mutationFor(mutationKey);
   return Math.round((s?.base_price_per_kg ?? 0) * weightKg * (m?.multiplier ?? 1));
+}
+
+export function rodById(id: string | null | undefined): RodTier | undefined {
+  const list = current.rods.length ? current.rods : FALLBACK_FISH_DATA.rods;
+  return list.find((r) => r.id === id);
+}
+
+/** The rod stats gameplay should use right now (equipped rod, else starter). */
+export function rodOrDefault(id: string | null | undefined): RodTier {
+  return (
+    rodById(id) ??
+    rodById(DEFAULT_ROD_ID) ??
+    FALLBACK_FISH_DATA.rods[0]!
+  );
 }
