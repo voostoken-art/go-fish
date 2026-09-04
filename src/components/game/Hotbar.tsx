@@ -3,9 +3,8 @@ import { Backpack, Coins, Loader2 } from "lucide-react";
 import { useGameStore } from "@/hooks/useGameStore";
 import { useInventoryStore } from "@/hooks/useInventoryStore";
 import { useProfileStore } from "@/hooks/useProfileStore";
-import { getFishData, mutationFor, priceFor } from "@/lib/fishRules";
+import { getFishData, mutationFor, priceFor, rodOrDefault } from "@/lib/fishRules";
 import { useRodStore } from "@/hooks/useRodStore";
-import { rodOrDefault } from "@/lib/fishRules";
 
 function speciesInfo(id: string) {
   const s = getFishData().species.find((sp) => sp.id === id);
