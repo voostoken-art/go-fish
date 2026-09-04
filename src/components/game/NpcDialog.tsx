@@ -4,15 +4,8 @@ import { useNpc } from "@/hooks/useNpc";
 import { npcById } from "./npcs";
 import { useProfileStore } from "@/hooks/useProfileStore";
 import { getFishData, mutationFor, priceFor } from "@/lib/fishRules";
-import { getInventory, sellFish } from "@/lib/profile.functions";
-
-interface InventoryItem {
-  id: string;
-  species_id: string;
-  weight_kg: number;
-  mutation_key: string;
-  caught_at: string;
-}
+import { sellFish } from "@/lib/profile.functions";
+import { useInventoryStore } from "@/hooks/useInventoryStore";
 
 function speciesName(id: string) {
   return getFishData().species.find((s) => s.id === id)?.name ?? id;
@@ -27,8 +20,9 @@ export function NpcDialog() {
   const setProfile = useProfileStore((s) => s.setProfile);
 
   const [stage, setStage] = useState<"greeting" | "sell" | "talk">("greeting");
-  const [items, setItems] = useState<InventoryItem[]>([]);
-  const [loading, setLoading] = useState(false);
+  const items = useInventoryStore((s) => s.items);
+  const loading = useInventoryStore((s) => s.loading);
+  const refreshInventory = useInventoryStore((s) => s.refresh);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [talk, setTalk] = useState<string>("");
@@ -37,16 +31,9 @@ export function NpcDialog() {
 
   const refresh = useCallback(async () => {
     if (!proof || !trades) return;
-    setLoading(true);
     setError(null);
-    try {
-      setItems((await getInventory({ data: proof })) as InventoryItem[]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load your catch.");
-    } finally {
-      setLoading(false);
-    }
-  }, [proof, trades]);
+    await refreshInventory();
+  }, [proof, trades, refreshInventory]);
 
   useEffect(() => {
     if (!openId) return;
@@ -86,7 +73,7 @@ export function NpcDialog() {
     }
   };
 
-  const bySpecies = new Map<string, InventoryItem[]>();
+  const bySpecies = new Map<string, typeof items>();
   for (const i of items) {
     const list = bySpecies.get(i.species_id) ?? [];
     list.push(i);
