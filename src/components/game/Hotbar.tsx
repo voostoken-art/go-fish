@@ -3,7 +3,8 @@ import { Backpack, Coins, Loader2 } from "lucide-react";
 import { useGameStore } from "@/hooks/useGameStore";
 import { useInventoryStore } from "@/hooks/useInventoryStore";
 import { useProfileStore } from "@/hooks/useProfileStore";
-import { getFishData, mutationFor, priceFor } from "@/lib/fishRules";
+import { getFishData, mutationFor, priceFor, rodOrDefault } from "@/lib/fishRules";
+import { useRodStore } from "@/hooks/useRodStore";
 
 function speciesInfo(id: string) {
   const s = getFishData().species.find((sp) => sp.id === id);
@@ -24,6 +25,9 @@ export function Hotbar() {
   const loading = useInventoryStore((s) => s.loading);
   const refresh = useInventoryStore((s) => s.refresh);
   const proof = useProfileStore((s) => s.proof);
+  const equippedId = useRodStore((s) => s.equippedId);
+  const refreshRods = useRodStore((s) => s.refresh);
+  const rod = rodOrDefault(equippedId);
 
   const toggleRod = () => {
     const st = useGameStore.getState();
@@ -51,7 +55,8 @@ export function Hotbar() {
   useEffect(() => {
     if (!proof) return;
     void refresh();
-  }, [proof, refresh]);
+    void refreshRods();
+  }, [proof, refresh, refreshRods]);
 
   useEffect(() => {
     if (!bagOpen || !proof) return;
@@ -136,10 +141,18 @@ export function Hotbar() {
       )}
 
 
+      <div className="pointer-events-none absolute bottom-[104px] left-1/2 z-30 -translate-x-1/2 rounded-full border border-white/15 bg-slate-900/65 px-3 py-1 text-[11px] font-semibold text-slate-200 shadow-lg backdrop-blur-md">
+        <span className="text-amber-200">{rod.name}</span>
+        <span className="ml-2 text-slate-400">
+          Luck {rod.luck_percent}% · Speed {rod.speed_percent}% · Max{" "}
+          {rod.max_catch_weight_kg.toLocaleString()} kg
+        </span>
+      </div>
+
       <div className="pointer-events-auto absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 gap-2 rounded-2xl border border-white/20 bg-slate-900/55 p-2 shadow-2xl backdrop-blur-md">
         <HotSlot
           index={1}
-          label="Rod"
+          label={rod.name.replace(/ Rod$/, "")}
           active={!rodStowed}
           disabled={phase !== "idle"}
           onClick={toggleRod}

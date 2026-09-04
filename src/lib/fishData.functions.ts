@@ -35,7 +35,9 @@ export const getFishData = createServerFn({ method: "GET" }).handler(async (): P
       .from("fish_species")
       .select("id, name, color, rarity, min_weight_kg, max_weight_kg, is_monster, base_price_per_kg"),
     supabase.from("rarity_base_weights").select("rarity, base_weight"),
-    supabase.from("rod_tiers").select("id, name, max_catch_weight_kg"),
+    supabase
+      .from("rod_tiers")
+      .select("id, name, max_catch_weight_kg, luck_percent, speed_percent, price_coins"),
     supabase.from("bait_tiers").select("id, name, rarity_multiplier"),
     supabase.from("weather_effects").select("weather_kind, bite_window_seconds, rarity_multiplier"),
     supabase.from("game_config").select("key, value"),
@@ -86,6 +88,9 @@ export const getFishData = createServerFn({ method: "GET" }).handler(async (): P
     rods: ((rods.data ?? []) as RodTier[]).map((r) => ({
       ...r,
       max_catch_weight_kg: Number(r.max_catch_weight_kg),
+      luck_percent: Number(r.luck_percent ?? 0),
+      speed_percent: Number(r.speed_percent ?? 0),
+      price_coins: Number(r.price_coins ?? 0),
     })),
     baits: ((baits.data ?? []) as BaitTier[]).map((b) => ({
       ...b,
