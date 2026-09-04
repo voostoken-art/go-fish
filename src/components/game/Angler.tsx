@@ -1102,7 +1102,12 @@ export function Angler() {
               <group ref={rodBend} position={[0, 0.9, 0]}>
                 <mesh position={[0, 1.5, 0]} castShadow>
                   <cylinderGeometry args={[0.055, 0.1, 3, 8]} />
-                  <meshStandardMaterial color="#22303c" roughness={0.5} />
+                  <meshStandardMaterial
+                    color={look.blank}
+                    roughness={0.5}
+                    emissive={look.accent}
+                    emissiveIntensity={look.glow * 0.5}
+                  />
                 </mesh>
                 {/* ring guide bawah */}
                 <group position={[0.12, 1.0, 0]}>
@@ -1122,7 +1127,12 @@ export function Angler() {
                 <group position={[0, 3, 0]} rotation-x={0.22}>
                   <mesh position={[0, 1.1, 0]} castShadow>
                     <cylinderGeometry args={[0.025, 0.055, 2.2, 8]} />
-                    <meshStandardMaterial color="#2c3d4c" roughness={0.5} />
+                    <meshStandardMaterial
+                      color={look.tip}
+                      roughness={0.5}
+                      emissive={look.accent}
+                      emissiveIntensity={look.glow * 0.7}
+                    />
                   </mesh>
                   <group position={[0.08, 0.8, 0]}>
                     <object3D ref={(o) => (guideRefs.current[3] = o)} />
