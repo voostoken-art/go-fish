@@ -81,6 +81,7 @@ export function Angler() {
   const leftArm = useRef<THREE.Group>(null);
   const head = useRef<THREE.Group>(null);
   const rod = useRef<THREE.Group>(null);
+  const look = rodLook(useRodStore((s) => s.equippedId));
   const rodBend = useRef<THREE.Group>(null);
   const rodTip = useRef<THREE.Object3D>(null);
   const bobber = useRef<THREE.Group>(null);
