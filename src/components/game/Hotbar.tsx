@@ -1,18 +1,29 @@
 import { useEffect } from "react";
-import { Backpack, Fish as FishIcon, Coins } from "lucide-react";
+import { Backpack, Coins, Loader2 } from "lucide-react";
 import { useGameStore } from "@/hooks/useGameStore";
-import { priceFor } from "@/lib/fishRules";
+import { useInventoryStore } from "@/hooks/useInventoryStore";
+import { useProfileStore } from "@/hooks/useProfileStore";
+import { getFishData, mutationFor, priceFor } from "@/lib/fishRules";
+
+function speciesInfo(id: string) {
+  const s = getFishData().species.find((sp) => sp.id === id);
+  return { name: s?.name ?? id, color: s?.color ?? "#93c5fd" };
+}
 
 /**
  * Roblox-style bottom-center hotbar.
  * Slot 1 = fishing rod (click / press 1 to equip or stow on the back).
  * Slot 2 = bag (click / press 2 to open the caught-fish list).
+ * The bag list is the server-side bucket — the same one Marlo sells from.
  */
 export function Hotbar() {
   const rodStowed = useGameStore((s) => s.rodStowed);
-  const bag = useGameStore((s) => s.bag);
   const bagOpen = useGameStore((s) => s.bagOpen);
   const phase = useGameStore((s) => s.phase);
+  const items = useInventoryStore((s) => s.items);
+  const loading = useInventoryStore((s) => s.loading);
+  const refresh = useInventoryStore((s) => s.refresh);
+  const proof = useProfileStore((s) => s.proof);
 
   const toggleRod = () => {
     const st = useGameStore.getState();
@@ -36,9 +47,20 @@ export function Hotbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const totalKg = bag.reduce((a, b) => a + b.weight, 0);
-  const totalValue = bag.reduce(
-    (a, b) => a + priceFor(b.speciesId, b.weight, b.mutationKey),
+  // Keep the bag in sync: on sign-in and every time it is opened.
+  useEffect(() => {
+    if (!proof) return;
+    void refresh();
+  }, [proof, refresh]);
+
+  useEffect(() => {
+    if (!bagOpen || !proof) return;
+    void refresh();
+  }, [bagOpen, proof, refresh]);
+
+  const totalKg = items.reduce((a, b) => a + b.weight_kg, 0);
+  const totalValue = items.reduce(
+    (a, b) => a + priceFor(b.species_id, b.weight_kg, b.mutation_key),
     0,
   );
 
@@ -49,7 +71,7 @@ export function Hotbar() {
           <div className="mb-3 flex items-center justify-between">
             <p className="text-base font-bold tracking-tight">Bag</p>
             <p className="flex items-center gap-2 text-xs text-slate-300">
-              <span>{bag.length} item · {totalKg.toFixed(2)} kg</span>
+              <span>{items.length} item · {totalKg.toFixed(2)} kg</span>
               <span className="flex items-center gap-1 rounded-full bg-amber-400/15 px-2 py-0.5 text-amber-200">
                 <Coins size={12} />
                 {totalValue.toLocaleString()}
@@ -58,36 +80,47 @@ export function Hotbar() {
           </div>
 
           <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
-            {bag.length === 0 && (
+            {!proof && (
+              <p className="py-6 text-center text-xs text-slate-400">
+                Connect your wallet to see your catch.
+              </p>
+            )}
+            {proof && loading && items.length === 0 && (
+              <p className="flex items-center justify-center gap-2 py-6 text-xs text-slate-400">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading your catch…
+              </p>
+            )}
+            {proof && !loading && items.length === 0 && (
               <p className="py-6 text-center text-xs text-slate-400">
                 Bag is empty. Catch some fish!
               </p>
             )}
-            {bag.map((item) => {
-              const value = priceFor(item.speciesId, item.weight, item.mutationKey);
+            {items.map((item) => {
+              const info = speciesInfo(item.species_id);
+              const mutation = mutationFor(item.mutation_key);
+              const value = priceFor(item.species_id, item.weight_kg, item.mutation_key);
               return (
                 <div
-                  key={item.uid}
+                  key={item.id}
                   className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5"
                 >
                   <div
                     className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-950/40"
-                    style={{ color: item.color }}
+                    style={{ color: info.color }}
                   >
-                    <FishThumbnail color={item.color} />
+                    <FishThumbnail color={info.color} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold leading-tight">
-                      {item.mutationKey !== "none" ? (
+                      {mutation && mutation.key !== "none" ? (
                         <>
-                          <span className="text-slate-300">{item.mutationLabel}</span>{" "}
-                          {item.name}
+                          <span className="text-slate-300">{mutation.label}</span> {info.name}
                         </>
                       ) : (
-                        item.name
+                        info.name
                       )}
                     </p>
-                    <p className="text-[11px] text-slate-400">{item.weight.toFixed(2)} kg</p>
+                    <p className="text-[11px] text-slate-400">{item.weight_kg.toFixed(2)} kg</p>
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="flex items-center gap-1 text-sm font-bold text-amber-200">
@@ -101,6 +134,7 @@ export function Hotbar() {
           </div>
         </div>
       )}
+
 
       <div className="pointer-events-auto absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 gap-2 rounded-2xl border border-white/20 bg-slate-900/55 p-2 shadow-2xl backdrop-blur-md">
         <HotSlot
@@ -116,7 +150,7 @@ export function Hotbar() {
           index={2}
           label="Bag"
           active={bagOpen}
-          badge={bag.length || undefined}
+          badge={items.length || undefined}
           onClick={() => useGameStore.getState().toggleBag()}
         >
           <Backpack size={26} className="text-amber-200" />
