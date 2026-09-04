@@ -25,7 +25,7 @@ const ROD_LOOKS: Record<string, RodLook> = {
   mythic: { grip: "#4a0f22", blank: "#520f2e", tip: "#8c1445", accent: "#ff5c8a", glow: 1 },
 };
 const rodLook = (id: string | null | undefined): RodLook =>
-  (id && ROD_LOOKS[id]) || ROD_LOOKS.starter;
+  (id ? ROD_LOOKS[id] : undefined) ?? ROD_LOOKS["starter"]!;
 import { clampToWalkable, isInWater, player, resolvePlayerGround } from "@/hooks/usePlayer";
 import { boat } from "@/hooks/useBoat";
 import { useWeather } from "@/hooks/useWeather";
