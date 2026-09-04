@@ -1072,12 +1072,18 @@ export function Angler() {
               {/* grip */}
               <mesh position={[0, 0.35, 0]} castShadow>
                 <cylinderGeometry args={[0.13, 0.15, 1.1, 8]} />
-                <meshStandardMaterial color="#5d3a22" roughness={1} />
+                <meshStandardMaterial color={look.grip} roughness={1} />
               </mesh>
               {/* reel */}
               <mesh position={[0.28, 0.75, 0]} rotation={[0, 0, Math.PI / 2]} castShadow>
                 <cylinderGeometry args={[0.24, 0.24, 0.28, 12]} />
-                <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.3} />
+                <meshStandardMaterial
+                  color={look.accent}
+                  metalness={0.7}
+                  roughness={0.3}
+                  emissive={look.accent}
+                  emissiveIntensity={look.glow}
+                />
               </mesh>
               {/* reel crank handle (spins while reeling) */}
               <group ref={reelCrank} position={[0.44, 0.75, 0]} rotation={[0, 0, Math.PI / 2]}>
