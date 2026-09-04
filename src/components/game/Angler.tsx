@@ -1114,14 +1114,14 @@ export function Angler() {
                   <object3D ref={(o) => (guideRefs.current[1] = o)} />
                   <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                     <torusGeometry args={[0.055, 0.016, 6, 10]} />
-                    <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                    <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                   </mesh>
                 </group>
                 <group position={[0.1, 2.2, 0]}>
                   <object3D ref={(o) => (guideRefs.current[2] = o)} />
                   <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                     <torusGeometry args={[0.048, 0.014, 6, 10]} />
-                    <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                    <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                   </mesh>
                 </group>
                 <group position={[0, 3, 0]} rotation-x={0.22}>
@@ -1138,14 +1138,14 @@ export function Angler() {
                     <object3D ref={(o) => (guideRefs.current[3] = o)} />
                     <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                       <torusGeometry args={[0.04, 0.012, 6, 10]} />
-                      <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                      <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                     </mesh>
                   </group>
                   <group position={[0.06, 1.7, 0]}>
                     <object3D ref={(o) => (guideRefs.current[4] = o)} />
                     <mesh rotation={[Math.PI / 2, 0, 0]} castShadow>
                       <torusGeometry args={[0.034, 0.01, 6, 10]} />
-                      <meshStandardMaterial color="#b9c1c8" metalness={0.7} roughness={0.35} />
+                      <meshStandardMaterial color={look.accent} metalness={0.7} roughness={0.35} />
                     </mesh>
                   </group>
 
