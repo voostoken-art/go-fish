@@ -150,7 +150,7 @@ export function Hotbar() {
           index={2}
           label="Bag"
           active={bagOpen}
-          badge={bag.length || undefined}
+          badge={items.length || undefined}
           onClick={() => useGameStore.getState().toggleBag()}
         >
           <Backpack size={26} className="text-amber-200" />
