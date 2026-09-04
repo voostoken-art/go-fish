@@ -26,6 +26,8 @@ export interface NpcDef {
   smallTalk: string[];
   /** the fish merchant is the only NPC that trades for now */
   trades: boolean;
+  /** the rod shop keeper sells rods */
+  sellsRods?: boolean;
   /** teaser line for shops that are not implemented yet */
   comingSoon?: string;
 }
@@ -94,7 +96,7 @@ export const NPCS: NpcDef[] = [
     talkDist: 5.5,
     face: "stern",
     trades: false,
-    comingSoon: "The workshop is still varnishing the new rods. Soon.",
+    sellsRods: true,
     outfit: {
       skin: "#c98b5f",
       shirt: "#4b5f8a",
