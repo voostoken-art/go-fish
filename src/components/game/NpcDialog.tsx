@@ -6,6 +6,7 @@ import { useProfileStore } from "@/hooks/useProfileStore";
 import { getFishData, mutationFor, priceFor } from "@/lib/fishRules";
 import { sellFish } from "@/lib/profile.functions";
 import { useInventoryStore } from "@/hooks/useInventoryStore";
+import { RodShop } from "./RodShop";
 
 function speciesName(id: string) {
   return getFishData().species.find((s) => s.id === id)?.name ?? id;
@@ -19,7 +20,7 @@ export function NpcDialog() {
   const profile = useProfileStore((s) => s.profile);
   const setProfile = useProfileStore((s) => s.setProfile);
 
-  const [stage, setStage] = useState<"greeting" | "sell" | "talk">("greeting");
+  const [stage, setStage] = useState<"greeting" | "sell" | "talk" | "rods">("greeting");
   const items = useInventoryStore((s) => s.items);
   const loading = useInventoryStore((s) => s.loading);
   const refreshInventory = useInventoryStore((s) => s.refresh);
@@ -28,6 +29,7 @@ export function NpcDialog() {
   const [talk, setTalk] = useState<string>("");
 
   const trades = !!npc?.trades;
+  const sellsRods = !!npc?.sellsRods;
 
   const refresh = useCallback(async () => {
     if (!proof || !trades) return;
@@ -112,7 +114,9 @@ export function NpcDialog() {
         </div>
 
         <div className="max-h-[46vh] overflow-y-auto px-4 py-4">
-          {stage === "talk" ? (
+          {stage === "rods" ? (
+            <RodShop />
+          ) : stage === "talk" ? (
             <p className="text-sm leading-relaxed text-slate-200">"{talk}"</p>
           ) : stage === "greeting" || !trades ? (
             <div className="space-y-3">
@@ -190,6 +194,15 @@ export function NpcDialog() {
         </div>
 
         <div className="flex flex-wrap gap-2 border-t border-white/10 px-4 py-3">
+          {sellsRods && stage !== "rods" && (
+            <button
+              type="button"
+              onClick={() => setStage("rods")}
+              className="rounded-lg bg-amber-400/90 px-3 py-1.5 text-xs font-semibold text-slate-900 transition-colors hover:bg-amber-300"
+            >
+              Browse rods
+            </button>
+          )}
           {trades && stage !== "sell" && (
             <button
               type="button"
