@@ -6,6 +6,7 @@ import { FishMesh } from "./Fish";
 import { MonsterFishMesh } from "./MonsterFish";
 import { MonsterBurstMesh, animateBurst } from "./MonsterBurst";
 import { rollFish, useGameStore, type FishCatch } from "@/hooks/useGameStore";
+import { equippedRod } from "@/hooks/useRodStore";
 import { clampToWalkable, isInWater, player, resolvePlayerGround } from "@/hooks/usePlayer";
 import { boat } from "@/hooks/useBoat";
 import { useWeather } from "@/hooks/useWeather";
@@ -501,7 +502,8 @@ export function Angler() {
     } else if (st.phase === "reel") {
       const isMonsterFight = !!st.fish?.isMonster;
       // monster raksasa: perlawanan panjang sebelum bisa diangkat
-      const reelDur = isMonsterFight ? 5.5 : 1.5;
+      const speed = Math.min(90, Math.max(0, equippedRod().speed_percent));
+      const reelDur = (isMonsterFight ? 5.5 : 1.5) * (1 - speed / 100);
       const k = Math.min(st.t / reelDur, 1);
       // fighting: rod high and bent, character leans back
       armR = lerp(-0.45, -1.1, Math.min(k * 2, 1));

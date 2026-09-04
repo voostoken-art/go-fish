@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import {
   ACTIVE_BAIT_TIER,
-  ACTIVE_ROD_TIER,
   getFishData,
   mult,
   rollMutation,
   type FishSpecies,
   type Rarity,
 } from "@/lib/fishRules";
+import { equippedRod } from "@/hooks/useRodStore";
 
 export type Phase = "idle" | "cast" | "waiting" | "bite" | "reel" | "caught";
 
@@ -50,8 +50,11 @@ export function rollFish(weatherKind = "cerah"): FishCatch {
   const chance = data.config["monster_catch_chance"] ?? 0;
   if (monster && Math.random() < chance) return toCatch(monster);
 
-  const rod = data.rods.find((r) => r.id === ACTIVE_ROD_TIER);
-  const cap = rod?.max_catch_weight_kg ?? Infinity;
+  const rod = equippedRod();
+  const cap = rod.max_catch_weight_kg;
+  // Luck raises the odds of the better rarities, it never guarantees them:
+  // weather and bait still scale the same weights.
+  const luck = 1 + Math.max(0, rod.luck_percent) / 100;
   const bait = data.baits.find((b) => b.id === ACTIVE_BAIT_TIER);
   const weather = data.weather[weatherKind];
 
@@ -61,7 +64,11 @@ export function rollFish(weatherKind = "cerah"): FishCatch {
   const weights = pool.map((s) => {
     const r = s.rarity ?? "common";
     const base = data.rarityWeights[r] ?? 1;
-    return Math.max(0, base * mult(bait?.rarity_multiplier, r) * mult(weather?.rarity_multiplier, r));
+    const luckBonus = r === "common" ? 1 : luck;
+    return Math.max(
+      0,
+      base * luckBonus * mult(bait?.rarity_multiplier, r) * mult(weather?.rarity_multiplier, r),
+    );
   });
   const total = weights.reduce((a, b) => a + b, 0);
 
