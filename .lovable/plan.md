@@ -15,7 +15,7 @@ Setiap rod punya 3 stat: **Luck %** (peluang ikan rarity tinggi), **Speed %** (m
 | Mythic | 130% | 50% | 1.500 kg | 1.000.000 |
 
 Cara kerja stat:
-- **Luck %**: menaikkan bobot rarity rare/epic/legendary/mythic sebesar persentase itu saat roll tangkapan.
+- **Luck %**: menaikkan bobot rarity rare/epic/legendary/mythic sebesar persentase itu saat roll tangkapan, tapi tidak menjamin mythic — cuaca, umpan, dan bobot dasar tetap berperan.
 - **Speed %**: durasi reel dikurangi persentase itu (dasar 1.5 detik, monster 5.5 detik).
 - **Weight**: ikan dengan berat minimum di atas batas rod tidak bisa tertangkap (seperti sistem cap sekarang).
 
