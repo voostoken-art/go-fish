@@ -3,16 +3,16 @@
 ## Tujuan
 Setiap rod punya 3 stat: **Luck %** (peluang ikan rarity tinggi), **Speed %** (mempercepat reel), **Weight kg** (batas berat ikan yang bisa ditarik). Pemain baru gratis **Starter Rod**; rod lain harus dibeli pakai coins, dan pemain bisa ganti-ganti rod yang dipakai.
 
-## Stat tiap rod (angka awal, bisa dikoreksi)
+## Stat tiap rod (Mythic sudah fix dari user; sisanya diskalakan di bawahnya, bisa dikoreksi)
 
 | Rod | Luck | Speed | Weight | Harga (coins) |
 |---|---|---|---|---|
 | Starter | 0% | 0% | 10 kg | Gratis |
-| Uncommon | 5% | 10% | 40 kg | 500 |
-| Rare | 12% | 20% | 100 kg | 2.000 |
-| Epic | 22% | 35% | 250 kg | 8.000 |
-| Legendary | 35% | 50% | 600 kg | 25.000 |
-| Mythic | 50% | 70% | 1.500 kg | 80.000 |
+| Uncommon | 10% | 5% | 40 kg | 1.000 |
+| Rare | 25% | 12% | 100 kg | 10.000 |
+| Epic | 50% | 22% | 250 kg | 60.000 |
+| Legendary | 80% | 35% | 600 kg | 250.000 |
+| Mythic | 130% | 50% | 1.500 kg | 1.000.000 |
 
 Cara kerja stat:
 - **Luck %**: menaikkan bobot rarity rare/epic/legendary/mythic sebesar persentase itu saat roll tangkapan.
