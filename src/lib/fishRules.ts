@@ -96,11 +96,12 @@ export const FALLBACK_FISH_DATA: FishData = {
     { id: "mythic", name: "Mythic Rod", max_catch_weight_kg: 1500, luck_percent: 130, speed_percent: 50, price_coins: 1000000 },
   ],
   baits: [
-    {
-      id: "basic_bait",
-      name: "Basic Bait",
-      rarity_multiplier: { common: 1, rare: 1, epic: 1, legendary: 1, mythic: 1 },
-    },
+    { id: "basic_bait", name: "Basic Bait", luck_percent: 0, price_coins: 0, rarity_multiplier: {} },
+    { id: "uncommon_bait", name: "Uncommon Bait", luck_percent: 20, price_coins: 1000, rarity_multiplier: {} },
+    { id: "rare_bait", name: "Rare Bait", luck_percent: 50, price_coins: 15000, rarity_multiplier: {} },
+    { id: "epic_bait", name: "Epic Bait", luck_percent: 95, price_coins: 120000, rarity_multiplier: {} },
+    { id: "legendary_bait", name: "Legendary Bait", luck_percent: 160, price_coins: 600000, rarity_multiplier: {} },
+    { id: "mythic_bait", name: "Mythic Bait", luck_percent: 250, price_coins: 2000000, rarity_multiplier: {} },
   ],
   weather: {
     cerah: { weather_kind: "cerah", bite_window_seconds: 1.6, rarity_multiplier: {} },
