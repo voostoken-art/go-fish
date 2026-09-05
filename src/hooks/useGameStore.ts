@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import {
-  ACTIVE_BAIT_TIER,
   getFishData,
   mult,
   rollMutation,
