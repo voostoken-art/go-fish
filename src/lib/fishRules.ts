@@ -72,7 +72,8 @@ export interface FishData {
 /** Active gear. A future shop swaps these ids; the formula stays untouched. */
 export const DEFAULT_ROD_ID = "starter";
 export const ACTIVE_ROD_TIER = DEFAULT_ROD_ID;
-export const ACTIVE_BAIT_TIER = "basic_bait";
+export const DEFAULT_BAIT_ID = "basic_bait";
+export const ACTIVE_BAIT_TIER = DEFAULT_BAIT_ID;
 
 export const DEFAULT_BITE_WINDOW = 1.6;
 
