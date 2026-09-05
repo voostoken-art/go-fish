@@ -13,6 +13,8 @@ import { Angler } from "./Angler";
 import { HUD } from "./HUD";
 import { Hotbar } from "./Hotbar";
 import { LoadingScreen } from "./LoadingScreen";
+import { StartGate } from "./StartGate";
+
 import { Weather } from "./Weather";
 import { RainImpacts } from "./RainImpacts";
 import { WeatherCycleController } from "./WeatherCycleController";
