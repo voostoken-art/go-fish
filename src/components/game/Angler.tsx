@@ -14,9 +14,9 @@ import { boat } from "@/hooks/useBoat";
 import { useWeather } from "@/hooks/useWeather";
 import { biteWindowFor } from "@/lib/fishRules";
 
-import {
 import { useBaitStore } from "@/hooks/useBaitStore";
 import { baitLook } from "@/lib/baitLooks";
+import {
   playBobberSplash,
   playCastWhizz,
   playFootstep,
