@@ -42,6 +42,9 @@ export interface BaitTier {
   id: string;
   name: string;
   rarity_multiplier: RarityMultiplier;
+  /** % bonus applied to rare/epic/legendary/mythic weights when rolling. */
+  luck_percent: number;
+  price_coins: number;
 }
 
 export interface WeatherEffect {
@@ -69,7 +72,8 @@ export interface FishData {
 /** Active gear. A future shop swaps these ids; the formula stays untouched. */
 export const DEFAULT_ROD_ID = "starter";
 export const ACTIVE_ROD_TIER = DEFAULT_ROD_ID;
-export const ACTIVE_BAIT_TIER = "basic_bait";
+export const DEFAULT_BAIT_ID = "basic_bait";
+export const ACTIVE_BAIT_TIER = DEFAULT_BAIT_ID;
 
 export const DEFAULT_BITE_WINDOW = 1.6;
 
@@ -93,11 +97,12 @@ export const FALLBACK_FISH_DATA: FishData = {
     { id: "mythic", name: "Mythic Rod", max_catch_weight_kg: 1500, luck_percent: 130, speed_percent: 50, price_coins: 1000000 },
   ],
   baits: [
-    {
-      id: "basic_bait",
-      name: "Basic Bait",
-      rarity_multiplier: { common: 1, rare: 1, epic: 1, legendary: 1, mythic: 1 },
-    },
+    { id: "basic_bait", name: "Basic Bait", luck_percent: 0, price_coins: 0, rarity_multiplier: {} },
+    { id: "uncommon_bait", name: "Uncommon Bait", luck_percent: 20, price_coins: 1000, rarity_multiplier: {} },
+    { id: "rare_bait", name: "Rare Bait", luck_percent: 50, price_coins: 15000, rarity_multiplier: {} },
+    { id: "epic_bait", name: "Epic Bait", luck_percent: 95, price_coins: 120000, rarity_multiplier: {} },
+    { id: "legendary_bait", name: "Legendary Bait", luck_percent: 160, price_coins: 600000, rarity_multiplier: {} },
+    { id: "mythic_bait", name: "Mythic Bait", luck_percent: 250, price_coins: 2000000, rarity_multiplier: {} },
   ],
   weather: {
     cerah: { weather_kind: "cerah", bite_window_seconds: 1.6, rarity_multiplier: {} },
@@ -176,4 +181,14 @@ export function rodOrDefault(id: string | null | undefined): RodTier {
     rodById(DEFAULT_ROD_ID) ??
     FALLBACK_FISH_DATA.rods[0]!
   );
+}
+
+export function baitById(id: string | null | undefined): BaitTier | undefined {
+  const list = current.baits.length ? current.baits : FALLBACK_FISH_DATA.baits;
+  return list.find((b) => b.id === id);
+}
+
+/** The bait stats gameplay should use right now (equipped bait, else basic). */
+export function baitOrDefault(id: string | null | undefined): BaitTier {
+  return baitById(id) ?? baitById(DEFAULT_BAIT_ID) ?? FALLBACK_FISH_DATA.baits[0]!;
 }

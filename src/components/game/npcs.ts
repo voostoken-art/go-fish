@@ -28,6 +28,8 @@ export interface NpcDef {
   trades: boolean;
   /** the rod shop keeper sells rods */
   sellsRods?: boolean;
+  /** the bait merchant sells baits */
+  sellsBaits?: boolean;
   /** teaser line for shops that are not implemented yet */
   comingSoon?: string;
 }
@@ -69,7 +71,7 @@ export const NPCS: NpcDef[] = [
     talkDist: 5.5,
     face: "squint",
     trades: false,
-    comingSoon: "Bait crates are still on the boat — come back soon!",
+    sellsBaits: true,
     outfit: {
       skin: "#e6a86b",
       shirt: "#8fbf5a",
