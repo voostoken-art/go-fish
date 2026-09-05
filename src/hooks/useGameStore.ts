@@ -7,6 +7,7 @@ import {
   type Rarity,
 } from "@/lib/fishRules";
 import { equippedRod } from "@/hooks/useRodStore";
+import { equippedBait } from "@/hooks/useBaitStore";
 
 export type Phase = "idle" | "cast" | "waiting" | "bite" | "reel" | "caught";
 
