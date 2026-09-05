@@ -17,18 +17,27 @@ export type Database = {
       bait_tiers: {
         Row: {
           id: string
+          luck_percent: number
           name: string
+          price_coins: number
           rarity_multiplier: Json
+          sort_order: number
         }
         Insert: {
           id: string
+          luck_percent?: number
           name: string
+          price_coins?: number
           rarity_multiplier?: Json
+          sort_order?: number
         }
         Update: {
           id?: string
+          luck_percent?: number
           name?: string
+          price_coins?: number
           rarity_multiplier?: Json
+          sort_order?: number
         }
         Relationships: []
       }
@@ -135,6 +144,42 @@ export type Database = {
           multiplier?: number
         }
         Relationships: []
+      }
+      player_baits: {
+        Row: {
+          bait_id: string
+          equipped: boolean
+          purchased_at: string
+          wallet_address: string
+        }
+        Insert: {
+          bait_id: string
+          equipped?: boolean
+          purchased_at?: string
+          wallet_address: string
+        }
+        Update: {
+          bait_id?: string
+          equipped?: boolean
+          purchased_at?: string
+          wallet_address?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_baits_bait_id_fkey"
+            columns: ["bait_id"]
+            isOneToOne: false
+            referencedRelation: "bait_tiers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_baits_wallet_address_fkey"
+            columns: ["wallet_address"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["wallet_address"]
+          },
+        ]
       }
       player_rods: {
         Row: {
@@ -306,6 +351,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      buy_bait: {
+        Args: { _bait_id: string; _wallet: string }
+        Returns: {
+          avatar_url: string | null
+          coins: number
+          created_at: string
+          display_name: string
+          fish_common: number
+          fish_epic: number
+          fish_legendary: number
+          fish_mythic: number
+          fish_rare: number
+          level: number
+          updated_at: string
+          username: string
+          wallet_address: string
+          xp: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       buy_rod: {
         Args: { _rod_id: string; _wallet: string }
         Returns: {
@@ -331,9 +401,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      equip_bait: {
+        Args: { _bait_id: string; _wallet: string }
+        Returns: undefined
+      }
       equip_rod: {
         Args: { _rod_id: string; _wallet: string }
         Returns: undefined
+      }
+      get_player_baits: {
+        Args: { _wallet: string }
+        Returns: {
+          bait_id: string
+          equipped: boolean
+          luck_percent: number
+          name: string
+          price_coins: number
+          purchased_at: string
+        }[]
       }
       get_player_rods: {
         Args: { _wallet: string }
