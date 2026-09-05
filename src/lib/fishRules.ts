@@ -182,3 +182,13 @@ export function rodOrDefault(id: string | null | undefined): RodTier {
     FALLBACK_FISH_DATA.rods[0]!
   );
 }
+
+export function baitById(id: string | null | undefined): BaitTier | undefined {
+  const list = current.baits.length ? current.baits : FALLBACK_FISH_DATA.baits;
+  return list.find((b) => b.id === id);
+}
+
+/** The bait stats gameplay should use right now (equipped bait, else basic). */
+export function baitOrDefault(id: string | null | undefined): BaitTier {
+  return baitById(id) ?? baitById(DEFAULT_BAIT_ID) ?? FALLBACK_FISH_DATA.baits[0]!;
+}
