@@ -38,7 +38,10 @@ export const getFishData = createServerFn({ method: "GET" }).handler(async (): P
     supabase
       .from("rod_tiers")
       .select("id, name, max_catch_weight_kg, luck_percent, speed_percent, price_coins"),
-    supabase.from("bait_tiers").select("id, name, rarity_multiplier"),
+    supabase
+      .from("bait_tiers")
+      .select("id, name, rarity_multiplier, luck_percent, price_coins")
+      .order("sort_order", { ascending: true }),
     supabase.from("weather_effects").select("weather_kind, bite_window_seconds, rarity_multiplier"),
     supabase.from("game_config").select("key, value"),
     supabase
