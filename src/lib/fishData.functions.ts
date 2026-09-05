@@ -98,6 +98,8 @@ export const getFishData = createServerFn({ method: "GET" }).handler(async (): P
     baits: ((baits.data ?? []) as BaitTier[]).map((b) => ({
       ...b,
       rarity_multiplier: b.rarity_multiplier ?? {},
+      luck_percent: Number(b.luck_percent ?? 0),
+      price_coins: Number(b.price_coins ?? 0),
     })),
     weather: weatherMap,
     config: cfg,
