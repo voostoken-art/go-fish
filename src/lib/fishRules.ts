@@ -42,6 +42,9 @@ export interface BaitTier {
   id: string;
   name: string;
   rarity_multiplier: RarityMultiplier;
+  /** % bonus applied to rare/epic/legendary/mythic weights when rolling. */
+  luck_percent: number;
+  price_coins: number;
 }
 
 export interface WeatherEffect {
