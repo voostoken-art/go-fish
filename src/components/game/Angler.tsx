@@ -15,6 +15,8 @@ import { useWeather } from "@/hooks/useWeather";
 import { biteWindowFor } from "@/lib/fishRules";
 
 import {
+import { useBaitStore } from "@/hooks/useBaitStore";
+import { baitLook } from "@/lib/baitLooks";
   playBobberSplash,
   playCastWhizz,
   playFootstep,
@@ -1154,6 +1156,7 @@ export function Angler() {
           <sphereGeometry args={[0.2, 12, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2]} />
           <meshStandardMaterial color="#f7f7f2" roughness={0.4} />
         </mesh>
+        <BaitOrb3D />
       </group>
 
       {/* hooked fish */}
@@ -1180,6 +1183,32 @@ export function Angler() {
       <group ref={burst} visible={false}>
         <MonsterBurstMesh />
       </group>
+    </group>
+  );
+}
+/** Bola umpan bercahaya yang menggantung di bawah pelampung. */
+function BaitOrb3D() {
+  const baitId = useBaitStore((s) => s.equippedId);
+  const look = baitLook(baitId);
+  return (
+    <group position={[0, -0.42, 0]}>
+      <mesh castShadow>
+        <sphereGeometry args={[0.12, 16, 16]} />
+        <meshStandardMaterial
+          color={look.core}
+          roughness={0.25}
+          metalness={0.1}
+          emissive={look.accent}
+          emissiveIntensity={look.glow}
+        />
+      </mesh>
+      {look.glow > 0 && (
+        <mesh>
+          <sphereGeometry args={[0.12 + look.glow * 0.1, 12, 12]} />
+          <meshBasicMaterial color={look.core} transparent opacity={0.16 + look.glow * 0.14} />
+        </mesh>
+      )}
+      <pointLight color={look.core} intensity={look.glow * 1.6} distance={2.5} />
     </group>
   );
 }

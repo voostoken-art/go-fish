@@ -5,6 +5,8 @@ import { useInventoryStore } from "@/hooks/useInventoryStore";
 import { useProfileStore } from "@/hooks/useProfileStore";
 import { getFishData, mutationFor, priceFor, rodOrDefault } from "@/lib/fishRules";
 import { useRodStore } from "@/hooks/useRodStore";
+import { useBaitStore } from "@/hooks/useBaitStore";
+import { baitOrDefault } from "@/lib/fishRules";
 
 function speciesInfo(id: string) {
   const s = getFishData().species.find((sp) => sp.id === id);
@@ -27,7 +29,10 @@ export function Hotbar() {
   const proof = useProfileStore((s) => s.proof);
   const equippedId = useRodStore((s) => s.equippedId);
   const refreshRods = useRodStore((s) => s.refresh);
+  const equippedBaitId = useBaitStore((s) => s.equippedId);
+  const refreshBaits = useBaitStore((s) => s.refresh);
   const rod = rodOrDefault(equippedId);
+  const bait = baitOrDefault(equippedBaitId);
 
   const toggleRod = () => {
     const st = useGameStore.getState();
@@ -56,7 +61,8 @@ export function Hotbar() {
     if (!proof) return;
     void refresh();
     void refreshRods();
-  }, [proof, refresh, refreshRods]);
+    void refreshBaits();
+  }, [proof, refresh, refreshRods, refreshBaits]);
 
   useEffect(() => {
     if (!bagOpen || !proof) return;
@@ -146,6 +152,9 @@ export function Hotbar() {
         <span className="ml-2 text-slate-400">
           Luck {rod.luck_percent}% · Speed {rod.speed_percent}% · Max{" "}
           {rod.max_catch_weight_kg.toLocaleString()} kg
+        </span>
+        <span className="ml-2 border-l border-white/15 pl-2 text-emerald-300">
+          {bait.name} · Luck {bait.luck_percent}%
         </span>
       </div>
 
