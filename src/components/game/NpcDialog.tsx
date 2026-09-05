@@ -84,7 +84,11 @@ export function NpcDialog() {
 
   return (
     <div className="pointer-events-auto fixed inset-0 z-50 flex items-end justify-center bg-slate-950/40 p-4 pb-10 backdrop-blur-[2px]">
-      <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/15 bg-slate-900/90 shadow-2xl">
+      <div
+        className={`w-full overflow-hidden rounded-2xl border border-white/15 bg-slate-900/90 shadow-2xl ${
+          stage === "rods" ? "max-w-3xl" : "max-w-xl"
+        }`}
+      >
         <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-400/20 text-amber-300">
             {trades ? (
